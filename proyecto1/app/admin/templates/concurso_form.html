@@ -1,0 +1,81 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+    {% if form.nombre.data %}
+        {{ form.nombre.data }}
+    {% else %}
+        Nuevo Concurso
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.nombre.label }}
+            {{ form.nombre }}<br>
+            {% for error in form.nombre.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.imagen.label }}
+            {{ form.imagen }}<br>
+            {% for error in form.imagen.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.url.label }}
+            {{ form.url }}<br>
+            {% for error in form.url.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.fechaInicio.label }}
+            {{ form.fechaInicio }}<br>
+            {% for error in form.fechaInicio.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+    
+        <div>
+            {{ form.fechaFin.label }}
+            {{ form.fechaFin }}<br>
+            {% for error in form.fechaFin.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.valor.label }}
+            {{ form.valor }}<br>
+            {% for error in form.valor.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.guion.label }}
+            {{ form.guion }}<br>
+            {% for error in form.guion.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.recomendaciones.label }}
+            {{ form.recomendaciones }}<br>
+            {% for error in form.recomendaciones.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>   
+        <div>
+        {% if form.nombre.data %}
+            <input type="submit">
+        {% else %}
+            {{ form.submit() }}
+        {% endif %}
+            
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base_template.html" %}
+{% block title %}{{ concurso.nombre }}{% endblock %}
+{% block content %}
+    <h1></h1>Nombre del concurso es: {{ concurso.nombre }}</h1> </br>
+    Imagen: {{ concurso.imagen }} </br>
+    URL: {{ concurso.url }} </br>
+    Fecha Inicio: {{ concurso.fechaInicio }} </br>
+    Fecha Fin: {{ concurso.fechaFin }} </br>
+    Valor: {{ concurso.valor }} </br>
+    Guion: {{ concurso.guion }} </br>
+    Recomendaciones: {{ concurso.recomendaciones }} </br>
+    Fecha Creación: {{ concurso.fechaCreacion }} </br>
+
+{% endblock %}
+
