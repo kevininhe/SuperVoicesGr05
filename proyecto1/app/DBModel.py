@@ -1,11 +1,51 @@
-from flask import url_for
-from slugify import slugify
-from sqlalchemy.exc import IntegrityError
-from app import db
-from sqlalchemy import asc, desc
-
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy 
+from sqlalchemy import insert
 
 from sqlalchemy.exc import IntegrityError
+
+
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///DB_proyecto1.db' 
+db = SQLAlchemy(app)
+
+
+
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+#from run import db
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'usuarios'
+    id = db.Column(db.Integer, primary_key=True)
+    nombres =  db.Column(db.String(256), nullable=False)
+    apellidos =  db.Column(db.String(256), nullable=False)
+    email = db.Column(db.String(256), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def save(self):
+        if not self.id:
+            db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_by_id(id):
+        return User.query.get(id)
+
+    @staticmethod
+    def get_by_email(email):
+        return User.query.filter_by(email=email).first()
+
 class Concurso(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', ondelete='CASCADE'), nullable=False)
@@ -60,32 +100,4 @@ class Participante(db.Model):
     observaciones = db.Column( db.String(250) )
     convertido = db.Boolean
     fechaCreacion = db.Column( db.DateTime )
-    def __repr__(self):
-        return f'<Participante {self.mail}>'
-    def save(self):
-        if not self.id:
-            db.session.add(self)
-        db.session.commit()
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-    def update(self):
-        db.session.commit()
-    def public_url(self):
-        return url_for('public.show_participante', url=self.url)
-    def concurso_delete(self):
-        return url_for('admin.participante_delete',participante_id=self.id)
-    def concurso_update(self):
-         return url_for('admin.participante_update',participante_id=self.id)
-    @staticmethod
-    def get_by_id(participante_id):
-        return Participante.query.filter_by(id=participante_id).first()
-    @staticmethod
-    def get_by_Concurso_id(concurso_id):
-        return Participante.query.filter_by(concurso_id=concurso_id).first()
-    @staticmethod
-    def get_all():
-        return Participante.query.all()
-    def get_by_user(user_id):
-        participante = participante.query.filter_by(user_id=user_id).order_by(desc(Participante.fechaCreacion)).all()
-        return participante
+    

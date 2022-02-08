@@ -1,0 +1,14 @@
+{% extends "base_template.html" %}
+{% block title %}{{ participante.nombre }}{% endblock %}
+{% block content %}
+    <h1></h1>Nombre del participante es: {{ participante.nombres }} {{ participante.apellidos }} </h1> </br>
+    ConcursoId: {{ participante.concurso_id }} </br>
+    path_audio: {{ participante.path_audio }} </br>
+    mail: {{ participante.mail }} </br>
+    observaciones: {{ participante.observaciones }} </br>
+    Fecha Fin: {{ participante.fechaFin }} </br>
+    convertido: {{ participante.convertido }} </br>
+    Guion: {{ participante.guion }} </br>
+    fechaCreacion: {{ participante.fechaCreacion }} </br>
+
+{% endblock %}

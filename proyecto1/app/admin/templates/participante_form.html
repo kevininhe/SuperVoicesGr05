@@ -1,0 +1,71 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+    {% if form.nombres.data %}
+        {{ form.nombres.data }} {{ form.apellidos.data }}
+    {% else %}
+        Nuevo Participante
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.concurso_id.label }}
+            {{ form.concurso_id }}<br>
+            {% for error in form.concurso_id.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.path_audio.label }}
+            {{ form.path_audio }}<br>
+            {% for error in form.path_audio.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.nombres.label }}
+            {{ form.nombres }}<br>
+            {% for error in form.nombres.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.apellidos.label }}
+            {{ form.apellidos }}<br>
+            {% for error in form.apellidos.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+    
+        <div>
+            {{ form.mail.label }}
+            {{ form.mail }}<br>
+            {% for error in form.mail.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.observaciones.label }}
+            {{ form.observaciones }}<br>
+            {% for error in form.observaciones.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.convertido.label }}
+            {{ form.convertido }}<br>
+            {% for error in form.convertido.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>  
+        <div>
+        
+         {{ form.submit() }}
+            
+        </div>
+    </form>
+{% endblock %}
