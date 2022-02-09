@@ -14,13 +14,3 @@ class ConcursoForm(FlaskForm):
     recomendaciones =  TextAreaField('recomendaciones', validators=[Length(max=128)])
     submit = SubmitField('Enviar')
 
-class ParticipanteForm(FlaskForm):
-    id = IntegerField('id')
-    concurso_id =  StringField('concurso_id', validators=[Length(max=128)])
-    path_audio =  StringField('path_audio', validators=[Length(max=128)])
-    nombres = StringField('nombres', validators=[Length(max=128)])
-    apellidos =  StringField('apellidos', validators=[Length(max=128)])
-    mail = StringField('mail', validators=[Length(max=128)])
-    observaciones =  TextAreaField('observaciones', validators=[Length(max=128)])
-    convertido = StringField('convertido', validators=[Length(max=128)])
-    submit = SubmitField('Enviar')

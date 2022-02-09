@@ -11,5 +11,17 @@
     Recomendaciones: {{ concurso.recomendaciones }} </br>
     Fecha Creación: {{ concurso.fechaCreacion }} </br>
 
+    <ul>
+        {% for participante in participantes %}
+            <li>
+                {{ participante.nombres }}  {{ participante.apellidos }}
+                <a href="{{ participante.public_url() }}">Ver detalle</a>
+                <a href="{{ participante.participante_delete() }}">Eliminar</a>
+              
+            </li>
+        {% endfor %}
+        </ul>
+        <li><a href="{{ url_for('public.participante_form') }}">Nuevo Participante</a></li>
 {% endblock %}
+
 

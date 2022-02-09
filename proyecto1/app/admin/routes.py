@@ -3,9 +3,11 @@ from flask_login import login_required, current_user
 from datetime import datetime
 
 
-from app.models import Concurso
+from app.models import Concurso, Participante
 from . import admin_bp
 from .forms import ConcursoForm
+
+
 
 @admin_bp.route("/admin/concurso/", methods=['GET', 'POST'], defaults={'concurso_id': None})
 @admin_bp.route("/admin/concurso/<int:concurso_id>/", methods=['GET', 'POST','PUT'])
@@ -61,58 +63,9 @@ def concurso_update(concurso_id):
             return redirect(url_for('public.index')) 
         return render_template('concurso_form.html', form=form)
 
-
-
-from app.models import Participante
-#from . import admin_bp
-from .forms import ParticipanteForm
-
-@admin_bp.route("/admin/participante/", methods=['GET', 'POST'], defaults={'participante_id': None})
-@admin_bp.route("/admin/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
-#@login_required
-def participante_form(participante_id): 
-    form = ParticipanteForm()
-    if form.validate_on_submit():
-        concurso_id = form.concurso_id.data
-        path_audio = form.path_audio.data
-        nombres = form.nombres.data
-        apellidos = form.apellidos.data
-        mail = form.mail.data
-        observaciones = form.observaciones.data
-        convertido = form.convertido.data
-        fechaCreacion = datetime.now()
-        participante = Participante(concurso_id=concurso_id
-                        ,path_audio=path_audio
-                        ,nombres=nombres
-                        ,apellidos=apellidos
-                        ,mail=mail
-                        ,observaciones=observaciones
-                        ,convertido=convertido
-                        ,fechaCreacion=fechaCreacion)
-        participante.save()
-        return redirect(url_for('public.index'))
-    return render_template("participante_form.html", form=form)
-
 @admin_bp.route("/participanteDelete/<int:participante_id>/", methods=['GET', 'POST'])   
 def  participante_delete(participante_id):
     participante = Participante.get_by_id(participante_id)
     participante.delete()
     return redirect(url_for('public.index'))
 
-@admin_bp.route("/participanteupdate/<int:participante_id>/", methods=['GET', 'POST'])   
-def participante_update(participante_id):
-    participante = Participante.get_by_id(participante_id)
-    if participante:
-        form = ParticipanteForm(formdata=request.form, obj=participante)
-        if request.method == 'POST' and form.validate():
-            participante.concurso_id = form.concurso_id.data
-            participante.path_audio = form.path_audio.data
-            participante.nombres = form.nombres.data
-            participante.apellidos = form.apellidos.data
-            participante.mail = form.mail.data
-            participante.observaciones = form.observaciones.data
-            participante.convertido = form.convertido.data
-            concurso.update()
-
-            return redirect(url_for('public.index')) 
-        return render_template('participante_form.html', form=form)
