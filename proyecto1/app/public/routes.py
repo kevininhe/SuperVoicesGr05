@@ -34,7 +34,7 @@ def show_participante(participante_id):
 def participante_form(participante_id): 
     form = ParticipanteForm()
     if form.validate_on_submit():
-        concurso_id = form.concurso_id.data
+        concurso_id = concurso_id
         path_audio = form.path_audio.data
         nombres = form.nombres.data
         apellidos = form.apellidos.data
