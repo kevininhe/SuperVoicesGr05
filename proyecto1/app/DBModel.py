@@ -98,6 +98,6 @@ class Participante(db.Model):
     apellidos = db.Column( db.String(250) , nullable=False)
     mail = db.Column( db.String(250), nullable=False )
     observaciones = db.Column( db.String(250) )
-    convertido = db.Boolean
+    convertido = db.Column(db.Boolean())
     fechaCreacion = db.Column( db.DateTime )
     
