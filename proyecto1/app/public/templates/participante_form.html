@@ -56,13 +56,6 @@
             {% endfor %}
         </div>
         <div>
-            {{ form.convertido.label }}
-            {{ form.convertido }}<br>
-            {% for error in form.convertido.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>  
-        <div>
         
          {{ form.submit() }}
             

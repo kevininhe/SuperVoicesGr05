@@ -34,13 +34,13 @@ def show_participante(participante_id):
 def participante_form(participante_id): 
     form = ParticipanteForm()
     if form.validate_on_submit():
-        concurso_id = concurso_id
+        concurso_id = form.concurso_id.data
         path_audio = form.path_audio.data
         nombres = form.nombres.data
         apellidos = form.apellidos.data
         mail = form.mail.data
         observaciones = form.observaciones.data
-        convertido = form.convertido.data
+        convertido = False
         fechaCreacion = datetime.now()
         participante = Participante(concurso_id=concurso_id
                         ,path_audio=path_audio
