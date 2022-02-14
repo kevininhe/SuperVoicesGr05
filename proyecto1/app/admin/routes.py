@@ -1,7 +1,7 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request,send_file
 from flask_login import login_required, current_user
 from datetime import datetime
-
+from werkzeug.utils import secure_filename
 
 from app.models import Concurso, Participante
 from . import admin_bp
@@ -16,7 +16,8 @@ def concurso_form(concurso_id):
     form = ConcursoForm()
     if form.validate_on_submit():
         nombre = form.nombre.data
-        imagen = form.imagen.data
+        path_imagen = secure_filename(form.imagen.data.filename)
+        form.imagen.data.save("app/static/images_concurso/" + path_imagen)
         url = form.url.data
         valor = form.valor.data
         fechaInicio = form.fechaInicio.data
@@ -26,7 +27,7 @@ def concurso_form(concurso_id):
         fechaCreacion = datetime.now()
         concurso = Concurso(user_id=current_user.id
                         ,nombre=nombre
-                        ,imagen=imagen
+                        ,imagen=path_imagen
                         ,url=url
                         ,valor=valor
                         ,fechaInicio=fechaInicio
@@ -69,3 +70,8 @@ def  participante_delete(participante_id):
     participante.delete()
     return redirect(url_for('public.index'))
 
+
+@admin_bp.route('/participante/uploads/<path:filename>', methods=['GET', 'POST'])
+def download_participante(filename):
+    path = "static/AudioFilesDestiny/{}".format(filename)
+    return send_file(path, as_attachment=True)

@@ -1,4 +1,67 @@
-{% extends "base_template.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!doctype html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+
+
+
+    <!-- Bootstrap core CSS -->
+        <link href="/static/sytles/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light  navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('public.index') }}">Supervoices</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if current_user.is_anonymous %}
+        </li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Iniciar sesión</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.show_signup_form') }}">Registro</a></li>
+        {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('public.principal') }}">Concursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.concurso_form') }}">Nuevo Concurso</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('public.participante_form') }}">Nuevo Participante</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
+                <li class="nav-item"><a class="nav-link"> Bienvenid@ {{ current_user.email }}</li>
+            {% endif %}
+      </ul>
+      <span class="navbar-text">
+        Equipo 5
+      </span>
+    </div>
+  </div>
+</nav>
+
+  <br>
+  <br>
+  <br>
 
 {% block title %}
     {% if form.nombre.data %}
@@ -7,65 +70,65 @@
         Nuevo Concurso
     {% endif %}
 {% endblock %}
-
-
+  <br>
+  <br>
 {% block content %}
-    <form action="" method="post" novalidate>
+    <form  action="" method="post" novalidate enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <div>
-            {{ form.nombre.label }}
+        <div >
+            {{ form.nombre.label }}<br>
             {{ form.nombre }}<br>
-            {% for error in form.nombre.errors %}
+            {% for error in form.nombre.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.imagen.label }}
+            {{ form.imagen.label }}<br>
             {{ form.imagen }}<br>
-            {% for error in form.imagen.errors %}
+            {% for error in form.imagen.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.url.label }}
+            {{ form.url.label }}<br>
             {{ form.url }}<br>
-            {% for error in form.url.errors %}
+            {% for error in form.url.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.fechaInicio.label }}
+            {{ form.fechaInicio.label }}<br>
             {{ form.fechaInicio }}<br>
-            {% for error in form.fechaInicio.errors %}
+            {% for error in form.fechaInicio.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
     
         <div>
-            {{ form.fechaFin.label }}
+            {{ form.fechaFin.label }}<br>
             {{ form.fechaFin }}<br>
-            {% for error in form.fechaFin.errors %}
+            {% for error in form.fechaFin.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.valor.label }}
+            {{ form.valor.label }}<br>
             {{ form.valor }}<br>
-            {% for error in form.valor.errors %}
+            {% for error in form.valor.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.guion.label }}
+            {{ form.guion.label }}<br>
             {{ form.guion }}<br>
-            {% for error in form.guion.errors %}
+            {% for error in form.guion.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
         <div>
-            {{ form.recomendaciones.label }}
+            {{ form.recomendaciones.label }}<br>
             {{ form.recomendaciones }}<br>
-            {% for error in form.recomendaciones.errors %}
+            {% for error in form.recomendaciones.errors %}<br>
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>   

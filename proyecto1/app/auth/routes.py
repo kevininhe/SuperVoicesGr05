@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
 
@@ -18,18 +18,23 @@ def show_signup_form():
         nombres = form.nombres.data
         apellidos = form.apellidos.data
         password = form.password.data
-        user = User.get_by_email(email)
-        if user is not None:
-            error = f'El email {email} ya se encuentra registrado con nosotros'
+        confirmar_password = form.password2.data
+        if password == confirmar_password:
+            error = 'La contraseña de verificación no coincide.'
+            user = User.get_by_email(email)
+            if user is not None:
+                flash(f'El email {email} ya se encuentra registrado')
+            else:
+                user = User(email=email, nombres=nombres, apellidos=apellidos)
+                user.set_password(password)
+                user.save()
+                login_user(user, remember=True)
+                next_page = request.args.get('next', None)
+                if not next_page or url_parse(next_page).netloc != '':
+                    next_page = url_for('public.index')
+                    return redirect(next_page)
         else:
-            user = User(email=email, nombres=nombres, apellidos=apellidos)
-            user.set_password(password)
-            user.save()
-            login_user(user, remember=True)
-            next_page = request.args.get('next', None)
-            if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('public.index')
-            return redirect(next_page)
+            flash('La contraseña no coincide')
     return render_template("signup_form.html", form=form, error=error)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -43,7 +48,7 @@ def login():
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('public.index')
+                next_page = url_for('public.principal')
             return redirect(next_page)
     return render_template('login_form.html', form=form)
 
