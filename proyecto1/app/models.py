@@ -58,7 +58,7 @@ class Participante(db.Model):
     apellidos = db.Column( db.String(250) , nullable=False)
     mail = db.Column( db.String(250), nullable=False )
     observaciones = db.Column( db.String(250) )
-    convertido = db.Boolean
+    convertido = db.Column(db.Boolean())
     fechaCreacion = db.Column( db.DateTime )
     def __repr__(self):
         return f'<Participante {self.mail}>'
@@ -72,20 +72,21 @@ class Participante(db.Model):
     def update(self):
         db.session.commit()
     def public_url(self):
-        return url_for('public.show_participante', url=self.url)
-    def concurso_delete(self):
+        return url_for('public.show_participante', participante_id=self.id)
+    def participante_delete(self):
         return url_for('admin.participante_delete',participante_id=self.id)
-    def concurso_update(self):
-         return url_for('admin.participante_update',participante_id=self.id)
     @staticmethod
     def get_by_id(participante_id):
         return Participante.query.filter_by(id=participante_id).first()
     @staticmethod
     def get_by_Concurso_id(concurso_id):
-        return Participante.query.filter_by(concurso_id=concurso_id).first()
+        return Participante.query.filter_by(concurso_id=concurso_id).all()
     @staticmethod
     def get_all():
         return Participante.query.all()
+    @staticmethod
+    def get_no_procesados():
+        return Participante.query.filter_by(convertido=False).all()
     def get_by_user(user_id):
         participante = participante.query.filter_by(user_id=user_id).order_by(desc(Participante.fechaCreacion)).all()
         return participante
