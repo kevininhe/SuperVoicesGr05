@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Nuevo Participante</title>
-    <!doctype html>
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="generator" content="Hugo 0.88.1">
+{% extends "base_template.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
 
+<link href="../../static/sytles/bootstrap.min.css" rel="stylesheet">
 
-
-    <!-- Bootstrap core CSS -->
-        <link href="../../static/sytles/bootstrap.min.css" rel="stylesheet">
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -29,104 +19,65 @@
         }
       }
     </style>
-</head>
-<body>
 
-  <nav class="navbar navbar-expand-lg navbar-light  navbar-dark bg-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('public.index') }}">Supervoices</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if current_user.is_anonymous %}
-        </li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.principal') }}">Concursos</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Iniciar sesión</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.show_signup_form') }}">Registro</a></li>
-        {% else %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('public.principal') }}">Concursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.concurso_form') }}">Nuevo Concurso</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('public.participante_form') }}">Nuevo Participante</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
-                <li class="nav-item"><a class="nav-link"> Bienvenid@ {{ current_user.email }}</li>
-            {% endif %}
-      </ul>
-      <span class="navbar-text">
-        Equipo 5
-      </span>
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/sytles/signin.css" rel="stylesheet">
+<main class="form-signin">
+  <form action="" method="post" novalidate enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+    <img class="mb-4" src="../../static/sytles/supervoices.png" alt="">
+
+      <label for="form-control">Concurso</label><br>
+        {{ form.concurso_id(class_="form-select form-select-sm") }}
+    <div class="mb-3">
+    <label for="formFile" class="form-label">Voz</label>
+        {{ form.path_audio(class_="form-control form-control-sm", type="file", id="formFile") }}
     </div>
-  </div>
-</nav>
+     <label for="form-control">Nombres</label>
+       {{ form.nombres(class_="form-control form-control-sm") }}
+      <label for="form-control">Apellidos</label>
+        {{ form.apellidos(class_="form-control form-control-sm") }}
+      <label for="form-control">Email</label>
+        {{ form.mail(class_="form-control form-control-sm") }}
+      <label for="form-control">Observaciones</label>
+        {{ form.observaciones(class_="form-control form-control-sm", size=32) }}
+        <br>
+        <br>
+      {{ form.submit(class_="w-100 btn btn-lg btn-primary") }}
 
-  <br>
-  <br>
-  <br>
-  <br>
+  {% for message in get_flashed_messages() %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .alert {
+        padding: 20px;
+        background-color: #f44336;
+        color: white;
+    }
+
+    .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+}
+
+    .closebtn:hover {
+        color: black;
+}
+    </style>
+
+<div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  <strong>Error</strong> {{ message }}</div>
+    {% endfor %}
 
 
-{% block title %}
-    {% if form.nombres.data %}
-        {{ form.nombres.data }} {{ form.apellidos.data }}
-    {% else %}
-        Nuevo Participante
-    {% endif %}
-{% endblock %}
-
-  <br>
-  <br>
-
-{% block content %}
-    <form action="" method="post" nonvalidate enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <div>
-            {{ form.concurso_id.label }}<br>
-            {{ form.concurso_id }}<br>
-            {% for error in form.concurso_id.errors %}<br>
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.path_audio.label }}<br>
-            {{ form.path_audio }}<br>
-            {% for error in form.path_audio.errors %}<br>
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.nombres.label }}<br>
-            {{ form.nombres }}<br>
-            {% for error in form.nombres.errors %}<br>
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.apellidos.label }}<br>
-            {{ form.apellidos }}<br>
-            {% for error in form.apellidos.errors %}<br>
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-
-        <div>
-            {{ form.mail.label }}<br>
-            {{ form.mail }}<br>
-            {% for error in form.mail.errors %}<br>
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.observaciones.label }}<br>
-            {{ form.observaciones }}<br>
-            {% for error in form.observaciones.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
-        
-         {{ form.submit() }}
-            
-        </div>
-    </form>
+  </form>
+</main>
 {% endblock %}

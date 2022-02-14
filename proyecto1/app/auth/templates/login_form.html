@@ -29,14 +29,9 @@
     <img class="mb-4" src="../static/sytles/supervoices.png" alt="">
 
       <label for="form-control">Email</label>
-    <div class="form-floating">
-        {{ form.email(class_="form-control", size=32) }}
-    </div>
+        {{ form.email(class_="form-control form-control-sm") }}
       <label for="form-control">Contraseña</label>
-    <div class="form-floating">
-        {{ form.password(class_="form-control", size=32) }}
-    </div>
-
+        {{ form.password(class_="form-control form-control-sm") }}
     <div class="checkbox mb-3">
       <label>
         {{ form.remember_me(class_="checkbox") }} {{ form.remember_me.label }}

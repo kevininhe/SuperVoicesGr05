@@ -29,26 +29,17 @@
     <img class="mb-4" src="../static/sytles/supervoices.png" alt="">
 
       <label for="form-control">Nombres</label>
-    <div class="form-floating">
-        {{ form.nombres(class_="form-control", size=32) }}
-    </div>
+        {{ form.nombres(class_="form-control form-control-sm") }}
       <label for="form-control">Apellidos</label>
-    <div class="form-floating">
-        {{ form.apellidos(class_="form-control", size=32) }}
-    </div>
+        {{ form.apellidos(class_="form-control form-control-sm") }}
       <label for="form-control">Email</label>
-    <div class="form-floating">
-        {{ form.email(class_="form-control", size=32) }}
-    </div>
+        {{ form.email(class_="form-control form-control-sm") }}
       <label for="form-control">Contraseña</label>
-    <div class="form-floating">
-        {{ form.password(class_="form-control", size=32) }}
-    </div>
+        {{ form.password(class_="form-control form-control-sm", size=32) }}
       <label for="form-control">Confirmar Contraseña</label>
-    <div class="form-floating">
-        {{ form.password2(class_="form-control", size=32) }}
-    </div>
-      {{ form.submit(class_="w-100 btn btn-lg btn-primary    ") }}
+        {{ form.password2(class_="form-control form-control-sm", size=32) }}
+
+      {{ form.submit(class_="w-100 btn btn-lg btn-primary") }}
 
    <div>¿ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a></div>
     <p class="mt-5 mb-3 text-muted" align="center">&copy; Equipo 5 2022</p>
