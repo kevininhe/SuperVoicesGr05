@@ -157,20 +157,16 @@
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
-    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for( 'public.concursopage2', url=concurso.nombre) }}">Previous</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for( 'public.show_concurso', url=concurso.nombre) }}">1</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage2',url=concurso.nombre) }}">2</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage3',url=concurso.nombre) }}">3</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4',url=concurso.nombre) }}">4</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage5',url=concurso.nombre) }}">5</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage2',url=concurso.nombre) }}">Next</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4',url=concurso.nombre) }}">Next</a></li>
   </ul>
 </nav>
 
 {% endblock %}
 </body>
 </html>
-
-
-
-

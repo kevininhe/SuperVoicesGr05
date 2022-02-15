@@ -4,8 +4,6 @@ from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
 from . import public_bp
 from .forms import ParticipanteForm
-from app import mail as mail_server
-from flask_mail import Message
 
 
 
@@ -28,7 +26,7 @@ def principal():
 @public_bp.route("/concursos/<string:url>/")
 def show_concurso(url):
     concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).slice(0, 20).all()
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
     if concurso is None:
         abort(404)
     return render_template("concurso_view.html", concurso=concurso, voz=participantes)
@@ -40,17 +38,11 @@ def show_participante(participante_id):
         abort(404)
     return render_template("participante_view.html", participante=participante)
 
-
-def sendConfirmationMail(recipient,nombre):
-    msg = Message("Confirmado", sender = 'proyectoCloud2022@gmail.com', recipients = [recipient])
-    msg.body = 'Recibimos tu audio %s, espera nuestro mail de confirmacion cuando lo procesemos' % nombre
-    mail_server.send(msg)
-
 @public_bp.route("/public/participante/", methods=['GET', 'POST'], defaults={'participante_id': None})
 @public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
 def participante_form(participante_id):
     form = ParticipanteForm()
-    choices_concursos = Concurso.query.with_entities(Concurso.url).all()
+    choices_concursos = Concurso.query.with_entities(Concurso.nombre).all()
     list_concursos = [tup[0] for tup in choices_concursos]
     form.concurso_id.choices = list_concursos
     if form.validate_on_submit():
@@ -72,7 +64,30 @@ def participante_form(participante_id):
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
         participante.save()
-        sendConfirmationMail(mail,nombres)
         return redirect(url_for('public.index'))
     return render_template("participante_form.html", form=form)
 
+
+@public_bp.route("/concursos/<string:url>/page2", methods=['GET', 'POST'])
+def concursopage2(url):
+    concurso = Concurso.get_by_url(url)
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(20, 40).all()
+    return render_template('concursopage2.html', voz=participantes, concurso=concurso)
+
+@public_bp.route("/concursos/<string:url>/page3", methods=['GET', 'POST'])
+def concursopage3(url):
+    concurso = Concurso.get_by_url(url)
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(40, 60).all()
+    return render_template('concursopage3.html', voz=participantes, concurso=concurso)
+
+@public_bp.route("/concursos/<string:url>/page4", methods=['GET', 'POST'])
+def concursopage4(url):
+    concurso = Concurso.get_by_url(url)
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(60, 80).all()
+    return render_template('concursopage4.html', voz=participantes, concurso=concurso)
+
+@public_bp.route("/concursos/<string:url>/page5", methods=['GET', 'POST'])
+def concursopage5(url):
+    concurso = Concurso.get_by_url(url)
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(80, 100).all()
+    return render_template('concursopage4.html', voz=participantes, concurso=concurso)
