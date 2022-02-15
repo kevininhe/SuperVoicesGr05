@@ -1,5 +1,4 @@
 from email.mime import audio
-from flask_mail import Message
 from .models import Participante
 import os
 
@@ -11,10 +10,10 @@ PATH_AUDIOS_NEW = "static/AudioFilesDestiny/audio_%s.mp3"
 PATH_AUDIOS_ORIGIN= "static/AudioFilesOrigin/%s"
 MAIN_PATH=os.path.dirname(__file__)
 
-def generateMailParticipante(nombre,recipient,mensaje,header,mail):
-    msg = Message(header, sender = 'proyectoCloud2022@gmail.com', recipients = [recipient])
-    msg.body = mensaje % nombre
-    mail.send(msg)
+def generateMailParticipante(nombre,recipient,mensaje,header):
+    cmd=f'sendemail -f proyectoCloud2022@gmail.com -t {recipient} -s smtp.gmail.com:587 -u "{header}" -m "{mensaje % nombre}" -v -xu proyectoCloud2022 -xp Cloud2022 -o tls=yes'
+    os.system(cmd)
+
 def procesarAudio(path,audio_id):
     path=PATH_AUDIOS_ORIGIN % path
     path = os.path.join(MAIN_PATH, path)
@@ -22,9 +21,9 @@ def procesarAudio(path,audio_id):
     newPath = os.path.join(MAIN_PATH, newPath)
     cmd=f'ffmpeg -loglevel quiet -y -i {path} {newPath}'
     os.system(cmd)
-    return newPath
+    return f'audio_{audio_id}.mp3'
 
-def jobAudios(mail):
+def jobAudios():
         print("Job Audios")
         participantes=Participante.get_no_procesados()
         print(f'Participantes sin procesar {len(participantes)}')
@@ -36,9 +35,9 @@ def jobAudios(mail):
             id=participante.id
             try:
                 newPath=procesarAudio(audio,id)
-                generateMailParticipante(nombre,mailParticipante,MENSAJE_EXITO,HEADER_EXITO,mail)
+                generateMailParticipante(nombre,mailParticipante,MENSAJE_EXITO,HEADER_EXITO)
                 participante.path_audio=newPath
                 participante.convertido=True
                 participante.update()
             except:
-                generateMailParticipante(nombre,mailParticipante,MENSAJE_FALLA,HEADER_FALLA,mail)
+                generateMailParticipante(nombre,mailParticipante,MENSAJE_FALLA,HEADER_FALLA)
