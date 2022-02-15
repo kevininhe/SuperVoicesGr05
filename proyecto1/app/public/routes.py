@@ -42,7 +42,7 @@ def show_participante(participante_id):
 @public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
 def participante_form(participante_id):
     form = ParticipanteForm()
-    choices_concursos = Concurso.query.with_entities(Concurso.nombre).all()
+    choices_concursos = Concurso.query.with_entities(Concurso.url).all()
     list_concursos = [tup[0] for tup in choices_concursos]
     form.concurso_id.choices = list_concursos
     if form.validate_on_submit():
