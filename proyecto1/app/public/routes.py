@@ -4,6 +4,8 @@ from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
 from . import public_bp
 from .forms import ParticipanteForm
+from app import mail as mail_server
+from flask_mail import Message
 
 
 
@@ -38,6 +40,12 @@ def show_participante(participante_id):
         abort(404)
     return render_template("participante_view.html", participante=participante)
 
+
+def sendConfirmationMail(recipient,nombre):
+    msg = Message("Confirmado", sender = 'proyectoCloud2022@gmail.com', recipients = [recipient])
+    msg.body = 'Recibimos tu audio %s, espera nuestro mail de confirmacion cuando lo procesemos' % nombre
+    mail_server.send(msg)
+
 @public_bp.route("/public/participante/", methods=['GET', 'POST'], defaults={'participante_id': None})
 @public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
 def participante_form(participante_id):
@@ -64,6 +72,7 @@ def participante_form(participante_id):
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
         participante.save()
+        sendConfirmationMail(mail,nombres)
         return redirect(url_for('public.index'))
     return render_template("participante_form.html", form=form)
 
