@@ -64,7 +64,10 @@ def participante_form(participante_id):
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
         participante.save()
-        return redirect(url_for('public.index'))
+        flash('Hemos recibido tu voz y la estamos procesando para que sea publicada en la \
+                            página del concurso y pueda ser posteriormente revisada por nuestro equipo de trabajo. \
+                            Tan pronto la voz quede publicada en la página del concurso te notificaremos por email.')
+        return  redirect(url_for('public.participante_form'))
     return render_template("participante_form.html", form=form)
 
 

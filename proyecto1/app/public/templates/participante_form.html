@@ -46,7 +46,7 @@
         <br>
       {{ form.submit(class_="w-100 btn btn-lg btn-primary") }}
 
-  {% for message in get_flashed_messages() %}
+	{% for message in get_flashed_messages() %}
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -55,6 +55,7 @@
         background-color: #f44336;
         color: white;
     }
+    .alert.success {background-color: #4CAF50;}
 
     .closebtn {
         margin-left: 15px;
@@ -72,9 +73,9 @@
 }
     </style>
 
-<div class="alert">
+<div class="alert success">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-  <strong>Error</strong> {{ message }}</div>
+  <strong>Proceso Exitoso!</strong> {{ message }}</div>
     {% endfor %}
 
 
