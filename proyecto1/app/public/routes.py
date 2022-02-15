@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
