@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, request,send_file
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
-
+import os
 from app.models import Concurso, Participante
 from . import admin_bp
 from .forms import ConcursoForm
@@ -67,6 +67,8 @@ def concurso_update(concurso_id):
 @admin_bp.route("/participanteDelete/<int:participante_id>/", methods=['GET', 'POST'])   
 def  participante_delete(participante_id):
     participante = Participante.get_by_id(participante_id)
+    os.remove("app/static/AudioFilesDestiny/{}".format(participante.path_audio))
+    os.remove("app/static/AudioFilesOrigin/{}".format(participante.path_audio_origin))	
     participante.delete()
     return redirect(url_for('public.index'))
 
