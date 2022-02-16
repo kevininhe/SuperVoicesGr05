@@ -57,6 +57,7 @@ def participante_form(participante_id):
         fechaCreacion = datetime.now()
         participante = Participante(concurso_id=concurso_id
                         ,path_audio=path_audio
+			,path_audio_origin=path_audio
                         ,nombres=nombres
                         ,apellidos=apellidos
                         ,mail=mail

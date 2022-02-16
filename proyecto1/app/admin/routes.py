@@ -75,3 +75,8 @@ def  participante_delete(participante_id):
 def download_participante(filename):
     path = "static/AudioFilesDestiny/{}".format(filename)
     return send_file(path, as_attachment=True)
+
+@admin_bp.route('/participante/uploads_origin/<path:filename>', methods=['GET', 'POST'])
+def participante_origin_download(filename):
+    path = "static/AudioFilesOrigin/{}".format(filename)
+    return send_file(path, as_attachment=True)

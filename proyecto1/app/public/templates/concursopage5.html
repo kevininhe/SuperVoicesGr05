@@ -126,7 +126,8 @@
                 <th scope="col">Fecha</th>
                 <th scope="col">Estado de la voz</th>
                 <th scope="col">Voz</th>
-                <th scope="col">Descargar</th>
+                <<th scope="col">Descargar original</th>
+                <th scope="col">Descargar convertida</th>
                 <<th scope="col">Detalle participante</th>
                 <th scope="col">Eliminar</th>
                 </tr>
@@ -142,7 +143,8 @@
                         <td><p>En proceso</p></td>
                     {% endif %}
                     <td><p><p><ul><audio src="/static/AudioFilesDestiny/{{ participantes.path_audio }}" controls> <source src="/static/AudioFilesDestiny/{{ participantes.path_audio }}" type="audio/mp3" ></audio></ul></p></p></td>
-                     <td><p><p><a href="{{ url_for('admin.download_participante', filename=participantes.path_audio) }}">Descargar</a></p></p></td>
+                     <td><p><p><a href="{{ url_for('admin.participante_origin_download', filename=participantes.path_audio_origin) }}">Descargar original</a></p></p></td>
+                     <td><p><p><a href="{{ url_for('admin.download_participante', filename=participantes.path_audio) }}">Descargar convertida</a></p></p></td>
                         <td><p><p><a href="{{ url_for('public.show_participante', participante_id= participantes.id) }}">Ver detalle</a></p></p></td>
                         <td><p><p><a href="{{ url_for('admin.participante_delete', participante_id= participantes.id) }}">Eliminar</a></p></p></td>
                     </tr>

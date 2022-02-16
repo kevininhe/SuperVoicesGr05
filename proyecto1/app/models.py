@@ -54,6 +54,7 @@ class Participante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     concurso_id = db.Column(db.Integer, db.ForeignKey('concurso.id', ondelete='CASCADE'), nullable=False)
     path_audio = db.Column( db.String(250), nullable=False )
+    path_audio_origin = db.Column(db.String(250), nullable=False)
     nombres = db.Column( db.String(250), nullable=False )
     apellidos = db.Column( db.String(250) , nullable=False)
     mail = db.Column( db.String(250), nullable=False )
