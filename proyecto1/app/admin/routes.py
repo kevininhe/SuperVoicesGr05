@@ -41,7 +41,8 @@ def concurso_form(concurso_id):
 
 @admin_bp.route("/concursoDelete/<int:concurso_id>/", methods=['GET', 'POST'])   
 def  concurso_delete(concurso_id):
-    concurso = Concurso.get_by_id(concurso_id)
+    concurso = Concurso.get_by_id(concurso_id) 
+    os.remove("app/static/images_concurso/{}".format(concurso.imagen))	
     concurso.delete()
     return redirect(url_for('public.index'))
 
