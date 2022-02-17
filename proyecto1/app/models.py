@@ -73,7 +73,7 @@ class Participante(db.Model):
     def update(self):
         db.session.commit()
     def public_url(self):
-        return url_for('public.show_participante', participante_id=self.id)
+        return url_for('public.show_participante',  participante_id=self.id)
     def participante_delete(self):
         return url_for('admin.participante_delete',participante_id=self.id)
     @staticmethod
@@ -81,7 +81,7 @@ class Participante(db.Model):
         return Participante.query.filter_by(id=participante_id).first()
     @staticmethod
     def get_by_Concurso_id(concurso_id):
-        return Participante.query.filter_by(concurso_id=concurso_id).all()
+        return Participante.query.filter_by(concurso_id=concurso_id).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
     @staticmethod
     def get_all():
         return Participante.query.all()

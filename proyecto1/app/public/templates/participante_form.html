@@ -28,8 +28,8 @@
       {{ form.hidden_tag() }}
     <img class="mb-4" src="../../static/sytles/supervoices.png" alt="">
 
-      <label for="form-control">Concurso</label><br>
-        {{ form.concurso_id(class_="form-select form-select-sm") }}
+    <label for="form-control">Concurso</label><br>
+        {{ form.concurso_id }}
     <div class="mb-3">
     <label for="formFile" class="form-label">Voz</label>
         {{ form.path_audio(class_="form-control form-control-sm", type="file", id="formFile") }}

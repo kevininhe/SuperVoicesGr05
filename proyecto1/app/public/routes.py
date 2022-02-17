@@ -26,7 +26,8 @@ def principal():
 @public_bp.route("/concursos/<string:url>/")
 def show_concurso(url):
     concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
+    #participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
+    participantes = Participante.get_by_Concurso_id(concurso.id)
     if concurso is None:
         abort(404)
     return render_template("concurso_view.html", concurso=concurso, voz=participantes)
@@ -38,15 +39,16 @@ def show_participante(participante_id):
         abort(404)
     return render_template("participante_view.html", participante=participante)
 
-@public_bp.route("/public/participante/", methods=['GET', 'POST'], defaults={'participante_id': None})
-@public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
-def participante_form(participante_id):
-    form = ParticipanteForm()
-    choices_concursos = Concurso.query.with_entities(Concurso.url).all()
-    list_concursos = [tup[0] for tup in choices_concursos]
-    form.concurso_id.choices = list_concursos
+@public_bp.route("/public/participante/<int:concurso_id>", methods=['GET', 'POST'])
+#@public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
+def participante_form(concurso_id):
+    form = ParticipanteForm(concurso_id)
+    #choices_concursos = Concurso.query.with_entities(Concurso.url).all()
+    #list_concursos = [tup[0] for tup in choices_concursos]
+    #form.concurso_id.choices = list_concursos
+    print(concurso_id)
     if form.validate_on_submit():
-        concurso_id = form.concurso_id.data
+        concurso_id =form.concurso_id
         path_audio = secure_filename(form.path_audio.data.filename)
         form.path_audio.data.save("app/static/AudioFilesOrigin/" + path_audio)
         nombres = form.nombres.data
@@ -68,7 +70,7 @@ def participante_form(participante_id):
         flash('Hemos recibido tu voz y la estamos procesando para que sea publicada en la \
                             página del concurso y pueda ser posteriormente revisada por nuestro equipo de trabajo. \
                             Tan pronto la voz quede publicada en la página del concurso te notificaremos por email.')
-        return  redirect(url_for('public.participante_form'))
+        return  redirect(url_for('public.participante_form',concurso_id=concurso_id))
     return render_template("participante_form.html", form=form)
 
 
