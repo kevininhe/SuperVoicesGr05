@@ -50,17 +50,29 @@ def  concurso_delete(concurso_id):
 def concurso_update(concurso_id):
     concurso = Concurso.get_by_id(concurso_id)
     if concurso:
-        form = ConcursoForm(formdata=request.form, obj=concurso)
+        form = ConcursoForm(obj=concurso)
         if request.method == 'POST' and form.validate():
-            concurso.nombre = form.nombre.data
-            concurso.imagen = form.imagen.data
-            concurso.url = form.url.data
-            concurso.valor = form.valor.data
-            concurso.fechaInicio = form.fechaInicio.data
-            concurso.fechaFin = form.fechaFin.data
-            concurso.guion = form.guion.data
-            concurso.recomendaciones = form.recomendaciones.data
-            concurso.update()
+            try:
+                concurso.nombre = form.nombre.data
+                path_imagen = secure_filename(form.imagen.data.filename)
+                form.imagen.data.save("app/static/images_concurso/" + path_imagen)
+                concurso.imagen = path_imagen
+                concurso.url = form.url.data
+                concurso.valor = form.valor.data
+                concurso.fechaInicio = form.fechaInicio.data
+                concurso.fechaFin = form.fechaFin.data
+                concurso.guion = form.guion.data
+                concurso.recomendaciones = form.recomendaciones.data
+                concurso.update()
+            except:
+                concurso.nombre = form.nombre.data
+                concurso.url = form.url.data
+                concurso.valor = form.valor.data
+                concurso.fechaInicio = form.fechaInicio.data
+                concurso.fechaFin = form.fechaFin.data
+                concurso.guion = form.guion.data
+                concurso.recomendaciones = form.recomendaciones.data
+                concurso.update()
 
             return redirect(url_for('public.index')) 
         return render_template('concurso_form.html', form=form)
