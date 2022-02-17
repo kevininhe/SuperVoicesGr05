@@ -7,8 +7,11 @@ from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///DB_proyecto1.db' 
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///DB_proyecto1.db' 
 db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://app:Secreto123@172.24.41.225/proyecto1'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'Secreto123'
 
 
 from flask_login import UserMixin
@@ -30,7 +33,9 @@ class User(db.Model, UserMixin):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, passwor
+        return check_password_hash(self.password, password)
+
+    def save(self):
         if not self.id:
             db.session.add(self)
         db.session.commit()
@@ -42,7 +47,6 @@ class User(db.Model, UserMixin):
     @staticmethod
     def get_by_email(email):
         return User.query.filter_by(email=email).first()
-
 
 from sqlalchemy.exc import IntegrityError
 class Concurso(db.Model):
