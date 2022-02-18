@@ -42,7 +42,14 @@ def concurso_form(concurso_id):
 @admin_bp.route("/concursoDelete/<int:concurso_id>/", methods=['GET', 'POST'])   
 def  concurso_delete(concurso_id):
     concurso = Concurso.get_by_id(concurso_id) 
-    os.remove("app/static/images_concurso/{}".format(concurso.imagen))	
+    participantes = Participante.get_paths_Concurso_id(concurso_id)
+   	    
+    for k in participantes:
+        print(k.path_audio)
+        os.remove("app/static/AudioFilesDestiny/{}".format(k.path_audio))
+        os.remove("app/static/AudioFilesOrigin/{}".format(k.path_audio_origin))
+
+    os.remove("app/static/images_concurso/{}".format(concurso.imagen))
     concurso.delete()
     return redirect(url_for('public.index'))
 

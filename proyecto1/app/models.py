@@ -83,6 +83,9 @@ class Participante(db.Model):
     def get_by_Concurso_id(concurso_id):
         return Participante.query.filter_by(concurso_id=concurso_id).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
     @staticmethod
+    def get_paths_Concurso_id(concurso_id):
+        return Participante.query.filter_by(concurso_id=concurso_id).all()
+    @staticmethod
     def get_all():
         return Participante.query.all()
     @staticmethod
