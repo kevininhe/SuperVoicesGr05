@@ -48,7 +48,7 @@
         {% else %}
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('public.principal') }}">Concursos</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.concurso_form') }}">Nuevo Concurso</a></li>
-
+		<li class="nav-item"><a class="nav-link" href="{{ url_for('public.participante_form',concurso_id=concurso.id) }}">Nuevo Participante</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
                 <li class="nav-item"><a class="nav-link"> Bienvenid@ {{ current_user.email }}</li>
             {% endif %}
@@ -159,13 +159,13 @@
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
-    <li class="page-item"><a class="page-link" href="{{ url_for( 'public.concursopage2', url=concurso.url) }}">Previous</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for( 'public.show_concurso', url=concurso.url) }}">1</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage2',url=concurso.url) }}">2</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage3',url=concurso.url) }}">3</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4',url=concurso.url) }}">4</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage5',url=concurso.url) }}">5</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4',url=concurso.url) }}">Next</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for( 'public.concursopage2', concurso_id=concurso.id) }}">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for( 'public.show_concurso', concurso_id=concurso.id) }}">1</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage2', concurso_id=concurso.id) }}">2</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage3', concurso_id=concurso.id) }}">3</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4', concurso_id=concurso.id) }}">4</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage5', concurso_id=concurso.id) }}">5</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('public.concursopage4', concurso_id=concurso.id) }}">Next</a></li>
   </ul>
 </nav>
 
