@@ -52,7 +52,7 @@ def entryFile(name,formatFile):
     else:
         return Response(status=404)
 @app.route('/converted/<string:name>/<string:formatFile>',methods=["GET","DELETE"])
-def entryFile(name,formatFile):
+def convertedFile(name,formatFile):
     path=convertidos_dir+"/"+name+"."+formatFile
     print(path)
     if(os.path.exists(path)):
