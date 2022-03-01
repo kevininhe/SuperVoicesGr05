@@ -14,6 +14,9 @@ os.makedirs(entrantes_dir, exists_ok=True)
 
 app.secret_key = 'secret'
 
+@app.route('/')
+def index():
+    return "<h1>Servidor FS</h1><h2>Links</h2><ul><li>/converted</li><li>/entry</li><li>/entry/<string:name></li><li>/converted/<string:name></li></ul>"
 @app.route('/converted',methods=["POST"])
 def uploadConvertedFile():
     try:
@@ -48,7 +51,7 @@ def entryFile(name):
     else:
         return Response(status=404)
 @app.route('/converted/<string:name>',methods=["GET","DELETE"])
-def entryFile(name):
+def convertidoFile(name):
     path=convertidos_dir+name
     if(os.path.exists(path)):
         if(request.method=="DELETE"):
