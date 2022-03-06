@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
 from . import public_bp
 from .forms import ParticipanteForm
+from .service import postAudioAPI
 
 
 
@@ -30,7 +31,7 @@ def show_concurso(url):
     participantes = Participante.get_by_Concurso_id(concurso.id)
     if concurso is None:
         abort(404)
-    return render_template("concurso_view.html", concurso=concurso, voz=participantes)
+    return render_template("concurso_view.html", concurso=concurso, voz=participantes,url=url)
 
 @public_bp.route("/participantes/<int:participante_id>/")
 def show_participante(participante_id):
@@ -50,7 +51,7 @@ def participante_form(concurso_id):
     if form.validate_on_submit():
         concurso_id =form.concurso_id
         path_audio = secure_filename(form.path_audio.data.filename)
-        form.path_audio.data.save("app/static/AudioFilesOrigin/" + path_audio)
+        form.path_audio.data.save("app/static/TempStorage/" + path_audio)
         nombres = form.nombres.data
         apellidos = form.apellidos.data
         mail = form.mail.data
@@ -67,6 +68,7 @@ def participante_form(concurso_id):
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
         participante.save()
+        postAudioAPI(path_audio)
         flash('Hemos recibido tu voz y la estamos procesando para que sea publicada en la \
                             página del concurso y pueda ser posteriormente revisada por nuestro equipo de trabajo. \
                             Tan pronto la voz quede publicada en la página del concurso te notificaremos por email.')

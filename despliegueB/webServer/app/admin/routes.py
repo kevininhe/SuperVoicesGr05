@@ -6,6 +6,7 @@ import os
 from app.models import Concurso, Participante
 from . import admin_bp
 from .forms import ConcursoForm
+from .service import deleteAudioAPI
 
 
 
@@ -46,8 +47,7 @@ def  concurso_delete(concurso_id):
    	    
     for k in participantes:
         print(k.path_audio)
-        os.remove("app/static/AudioFilesDestiny/{}".format(k.path_audio))
-        os.remove("app/static/AudioFilesOrigin/{}".format(k.path_audio_origin))
+        deleteAudioAPI(k.path_audio.split("."))
 
     os.remove("app/static/images_concurso/{}".format(concurso.imagen))
     concurso.delete()
