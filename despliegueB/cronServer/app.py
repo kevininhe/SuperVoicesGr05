@@ -3,6 +3,8 @@ from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import os
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Content
 
 HEADER_EXITO='Tu audio ya se convirtio!'
 HEADER_FALLA='Problemas con tu audio'
@@ -30,7 +32,9 @@ scheduler = APScheduler()
 
 db.init_app(app)
 scheduler.init_app(app)
-scheduler.start()    
+scheduler.start()
+
+sg = sendgrid.SendGridAPIClient(api_key='')
 
 class Participante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,8 +63,17 @@ class Participante(db.Model):
         return Participante.query.filter_by(convertido=False).all()
 
 def generateMailParticipante(nombre,recipient,mensaje,header):
-    cmd=f'sendemail -f proyectoCloud2022@gmail.com -t {recipient} -s smtp.gmail.com:587 -u "{header}" -m "{mensaje % nombre}" -v -xu proyectoCloud2022 -xp Cloud2022 -o tls=yes'
-    os.system(cmd)
+    from_email = Email("proyectoCloud2022@gmail.com") 
+    to_email = To(recipient)  # Change to your recipient
+    subject = header
+    content = Content("text/plain", mensaje % nombre)
+    mail = Mail(from_email, to_email, subject, content)
+
+    # Get a JSON-ready representation of the Mail object
+    mail_json = mail.get()
+
+    # Send an HTTP POST request to /mail/send
+    response = sg.client.mail.send.post(request_body=mail_json)
 
 def procesarAudio(name,audio_id):
     path=entrantes_dir+"/"+name
