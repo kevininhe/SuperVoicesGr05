@@ -5,6 +5,8 @@ import requests
 import os
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
+from flask_login import UserMixin
+import os
 
 HEADER_EXITO='Tu audio ya se convirtio!'
 HEADER_FALLA='Problemas con tu audio'
@@ -23,7 +25,7 @@ os.makedirs(convertidos_dir, exist_ok=True)
 entrantes_dir = os.path.join(app.instance_path, 'entrantes')
 os.makedirs(entrantes_dir,exist_ok=True)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@172.28.208.1:49153/app_cloud'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@172.28.208.1:49154/app_cloud'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secret'
 
@@ -36,6 +38,27 @@ scheduler.start()
 
 sg = sendgrid.SendGridAPIClient(api_key='')
 
+class User(db.Model, UserMixin):
+    __tablename__ = 'usuarios'
+    id = db.Column(db.Integer, primary_key=True)
+    nombres =  db.Column(db.String(256), nullable=False)
+    apellidos =  db.Column(db.String(256), nullable=False)
+    email = db.Column(db.String(256), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+
+class Concurso(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', ondelete='CASCADE'), nullable=False)
+    nombre = db.Column( db.String(250) )
+    imagen = db.Column( db.String(250) )
+    url = db.Column( db.String(250) )
+    fechaInicio = db.Column( db.DateTime )
+    fechaFin = db.Column( db.DateTime )
+    valor = db.Column( db.String(250) )
+    guion = db.Column( db.String(250) )
+    recomendaciones = db.Column( db.String(250) )
+    fechaCreacion = db.Column( db.DateTime )
+
 class Participante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     concurso_id = db.Column(db.Integer, db.ForeignKey('concurso.id', ondelete='CASCADE'), nullable=False)
@@ -47,33 +70,32 @@ class Participante(db.Model):
     observaciones = db.Column( db.String(250) )
     convertido = db.Column(db.Boolean())
     fechaCreacion = db.Column( db.DateTime )
-    def __repr__(self):
-        return f'<Participante {self.mail}>'
-    def save(self):
-        if not self.id:
-            db.session.add(self)
-        db.session.commit()
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-    def update(self):
-        db.session.commit()
+
     @staticmethod
     def get_no_procesados():
         return Participante.query.filter_by(convertido=False).all()
 
 def generateMailParticipante(nombre,recipient,mensaje,header):
+    print("Start mail")
     from_email = Email("proyectoCloud2022@gmail.com") 
+    print("FROM")
     to_email = To(recipient)  # Change to your recipient
+    print("TO")
     subject = header
+    print("HEADER")
     content = Content("text/plain", mensaje % nombre)
+    print("Content")
     mail = Mail(from_email, to_email, subject, content)
+    print("mail")
 
     # Get a JSON-ready representation of the Mail object
     mail_json = mail.get()
+    print("JSON")
 
     # Send an HTTP POST request to /mail/send
     response = sg.client.mail.send.post(request_body=mail_json)
+    print("Start mail")
+    print(response.status_code)
 
 def procesarAudio(name,audio_id):
     path=entrantes_dir+"/"+name
@@ -94,8 +116,10 @@ def getAudio(name):
         r=requests.get(url)
         with open(entrantes_dir+"/"+name,'wb') as f:
             f.write(r.content)
+            print("success")
     except Exception as e:
-        print(str(e))
+        print("Failure")
+        raise e
 def deleteAudioConverted(name):
     path=convertidos_dir+"/"+name
     os.remove(path)
@@ -110,6 +134,7 @@ def jobAudios():
         for participante in participantes:
             print(participante)
             audio=participante.path_audio
+            print(audio)
             mailParticipante=participante.mail
             nombre=participante.nombres
             id=participante.id
@@ -119,13 +144,13 @@ def jobAudios():
                 sendAudio(newPath)
                 deleteAudioEntry(audio)
                 deleteAudioConverted(newPath)
-                generateMailParticipante(nombre,mailParticipante,MENSAJE_EXITO,HEADER_EXITO)
                 participante.path_audio=newPath
                 participante.convertido=True
-                participante.update()
+                db.session.commit()
+                generateMailParticipante(nombre,mailParticipante,MENSAJE_EXITO,HEADER_EXITO)
             except Exception as e:
                 print(str(e))
-                generateMailParticipante(nombre,mailParticipante,MENSAJE_FALLA,HEADER_FALLA)
+                #generateMailParticipante(nombre,mailParticipante,MENSAJE_FALLA,HEADER_FALLA)
 
 @scheduler.task('interval', id='job_process', seconds=20, misfire_grace_time=120)
 def cronTask():
