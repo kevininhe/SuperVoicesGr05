@@ -4,8 +4,8 @@ from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
 from . import public_bp
 from .forms import ParticipanteForm
+import math
 from .service import postAudioAPI
-
 
 
 @public_bp.route("/")
@@ -24,14 +24,17 @@ def principal():
     #     concursos = Concurso.get_by_user(current_user.id)
     return render_template("index.html", concursos=concursos)
 
-@public_bp.route("/concursos/<string:url>/")
-def show_concurso(url):
+@public_bp.route("/concursos/<string:url>/", defaults={"page": 1})
+@public_bp.route("/concursos/<string:url>/<int:page>")
+def show_concurso(page,url):
     concurso = Concurso.get_by_url(url)
-    #participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(0, 20).all()
-    participantes = Participante.get_by_Concurso_id(concurso.id)
-    if concurso is None:
-        abort(404)
-    return render_template("concurso_view.html", concurso=concurso, voz=participantes,url=url)
+    participantes = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).order_by(Participante.fechaCreacion.desc()).paginate(page=page, per_page=20).items
+    number_pages = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).count()
+    if number_pages<= 20:
+        number_pages=1
+    else:
+        number_pages= int(math.ceil(number_pages/20)+1)
+    return render_template("concurso_view.html", concurso=concurso, voz=participantes, pages=number_pages)
 
 @public_bp.route("/participantes/<int:participante_id>/")
 def show_participante(participante_id):
@@ -68,7 +71,7 @@ def participante_form(concurso_id):
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
         participante.save()
-        postAudioAPI(path_audio)
+        postAudioAPI("app/static/TempStorage/" + path_audio)
         flash('Hemos recibido tu voz y la estamos procesando para que sea publicada en la \
                             página del concurso y pueda ser posteriormente revisada por nuestro equipo de trabajo. \
                             Tan pronto la voz quede publicada en la página del concurso te notificaremos por email.')
@@ -76,26 +79,3 @@ def participante_form(concurso_id):
     return render_template("participante_form.html", form=form)
 
 
-@public_bp.route("/concursos/<string:url>/page2", methods=['GET', 'POST'])
-def concursopage2(url):
-    concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(20, 40).all()
-    return render_template('concursopage2.html', voz=participantes, concurso=concurso)
-
-@public_bp.route("/concursos/<string:url>/page3", methods=['GET', 'POST'])
-def concursopage3(url):
-    concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(40, 60).all()
-    return render_template('concursopage3.html', voz=participantes, concurso=concurso)
-
-@public_bp.route("/concursos/<string:url>/page4", methods=['GET', 'POST'])
-def concursopage4(url):
-    concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(60, 80).all()
-    return render_template('concursopage4.html', voz=participantes, concurso=concurso)
-
-@public_bp.route("/concursos/<string:url>/page5", methods=['GET', 'POST'])
-def concursopage5(url):
-    concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(url)).order_by(Participante.fechaCreacion.desc()).slice(80, 100).all()
-    return render_template('concursopage4.html', voz=participantes, concurso=concurso)
