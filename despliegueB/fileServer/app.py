@@ -31,7 +31,8 @@ def uploadCEntryFile():
         audio=request.files["audio"]
         audio.save(os.path.join(entrantes_dir, secure_filename(audio.filename)))
         return Response(status=201)
-    except Exception:
+    except Exception as e:
+        print(str(e))
         return Response(status=400)
 @app.route('/entry/<string:name>/<string:formatFile>',methods=["GET","DELETE"])
 def entryFile(name,formatFile):
@@ -70,4 +71,4 @@ def convertedFile(name,formatFile):
     else:
         return Response(status=404)
 if __name__=="__main__":
-    app.run(port=5000,host="0.0.0.0")
+    app.run(port=5003,host="0.0.0.0")
