@@ -16,8 +16,8 @@
         {% for concurso in concursos %}
         <li>
             <a href="{{ abrirURLConcurso(concurso['url_concurso']) }}">{{ concurso["nombre"] }}</a>
-            <a href="#">Eliminar</a>
-            <a href="#">Actualizar</a>
+            <a href="{{ concurso_delete(concurso['url_concurso']) }}">Eliminar</a>
+            <a href="{{ concurso_update(concurso['url_concurso']) }}">Actualizar</a>
         </li>
     {% endfor %}
     {% endif %}

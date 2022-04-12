@@ -21,7 +21,11 @@ def create_app():
     def utility_processor():
         def abrirURLConcurso(urlConcurso):
             return url_for('public.show_concurso', url=urlConcurso)
-        return dict(abrirURLConcurso=abrirURLConcurso)
+        def concurso_update(urlConcurso):
+            return url_for('admin.concurso_update',url_concurso=urlConcurso)
+        def concurso_delete(urlConcurso):
+            return url_for('admin.concurso_delete',url_concurso=urlConcurso)
+        return dict(abrirURLConcurso=abrirURLConcurso,concurso_update=concurso_update,concurso_delete=concurso_delete)
 
     # Registro de los Blueprints
     from .auth import auth_bp

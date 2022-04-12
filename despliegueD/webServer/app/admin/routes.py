@@ -8,7 +8,7 @@ from . import admin_bp
 from .forms import ConcursoForm
 from .service import deleteAudioAPI
 from app.utilidadesDynamo import *
-
+from collections import namedtuple
 
 
 @admin_bp.route("/admin/concurso/", methods=['GET', 'POST'], defaults={'concurso_id': None})
@@ -40,48 +40,62 @@ def concurso_form(concurso_id):
                         ,fechaCreacion=fechaCreacion.strftime('%Y-%m-%d-%H:%M:%S'))
         return redirect(url_for('public.index'))
     return render_template("concurso_form.html", form=form)
-
-@admin_bp.route("/concursoDelete/<int:concurso_id>/", methods=['GET', 'POST'])   
-def  concurso_delete(concurso_id):
-    concurso = Concurso.get_by_id(concurso_id) 
+ 
+@admin_bp.route("/concursoDelete/<string:url_concurso>/", methods=['GET', 'POST'])
+def concurso_delete(url_concurso):
+    concurso = traerInfoConcurso(url_concurso)
+    concurso["PK"] = concurso["PK"].replace("CON#","")
+    # TODO : Eliminar voces almacenadas en S3
+    """
     participantes = Participante.get_paths_Concurso_id(concurso_id)
    	    
     for k in participantes:
         print(k.path_audio)
         deleteAudioAPI(k.path_audio.split("."))
+    """
 
-    os.remove("app/static/images_concurso/{}".format(concurso.imagen))
-    concurso.delete()
+    os.remove("app/static/images_concurso/{}".format(concurso["imagen"]))
+    # Eliminar concurso en Dynamo
+    eliminarConcurso(concurso["PK"])
     return redirect(url_for('public.index'))
 
-@admin_bp.route("/concursoupdate/<int:concurso_id>/", methods=['GET', 'POST'])   
-def concurso_update(concurso_id):
-    concurso = Concurso.get_by_id(concurso_id)
+@admin_bp.route("/concursoupdate/<string:url_concurso>/", methods=['GET', 'POST'])   
+def concurso_update(url_concurso):
+    concurso = traerInfoConcurso(url_concurso)
     if concurso:
-        form = ConcursoForm(obj=concurso)
+        # Formatear campos para que puedan ser mostrados en el form
+        concurso["fechaInicio"] = datetime.strptime(concurso["fechaInicio"],'%Y-%m-%d')
+        concurso["fechaFin"] = datetime.strptime(concurso["fechaFin"],'%Y-%m-%d')
+        concurso["url"] = concurso["url_concurso"]
+        concurso["PK"] = concurso["PK"].replace("CON#","")
+        # Crear objeto a partir de diccionario
+        concurso_obj = namedtuple('Struct', concurso.keys())(*concurso.values())
+        form = ConcursoForm(obj=concurso_obj)
+
         if request.method == 'POST' and form.validate():
             try:
-                concurso.nombre = form.nombre.data
                 path_imagen = secure_filename(form.imagen.data.filename)
                 form.imagen.data.save("app/static/images_concurso/" + path_imagen)
-                concurso.imagen = path_imagen
-                concurso.url = form.url.data
-                concurso.valor = form.valor.data
-                concurso.fechaInicio = form.fechaInicio.data
-                concurso.fechaFin = form.fechaFin.data
-                concurso.guion = form.guion.data
-                concurso.recomendaciones = form.recomendaciones.data
-                concurso.update()
+                # Actualiza el concurso en Dynamo
+                response = actualizarConcursoForm(uid=concurso["PK"]
+                                ,nombre=form.nombre.data
+                                ,imagen=path_imagen
+                                ,url=form.url.data
+                                ,valor=form.valor.data
+                                ,fechaInicio=form.fechaInicio.data.strftime('%Y-%m-%d')
+                                ,fechaFin=form.fechaFin.data.strftime('%Y-%m-%d')
+                                ,guion=form.guion.data
+                                ,recomendaciones=form.recomendaciones.data)
             except:
-                concurso.nombre = form.nombre.data
-                concurso.url = form.url.data
-                concurso.valor = form.valor.data
-                concurso.fechaInicio = form.fechaInicio.data
-                concurso.fechaFin = form.fechaFin.data
-                concurso.guion = form.guion.data
-                concurso.recomendaciones = form.recomendaciones.data
-                concurso.update()
-
+                # Actualiza el concurso en Dynamo sin la imagen
+                response = actualizarConcursoFormNoImg(uid=concurso["PK"]
+                                ,nombre=form.nombre.data
+                                ,url=form.url.data
+                                ,valor=form.valor.data
+                                ,fechaInicio=form.fechaInicio.data.strftime('%Y-%m-%d')
+                                ,fechaFin=form.fechaFin.data.strftime('%Y-%m-%d')
+                                ,guion=form.guion.data
+                                ,recomendaciones=form.recomendaciones.data)
             return redirect(url_for('public.index')) 
         return render_template('concurso_form.html', form=form)
 
