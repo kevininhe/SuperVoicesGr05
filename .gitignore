@@ -13,3 +13,9 @@
 /proyecto1/lib
 /proyecto1/lib64
 /proyecto1/share
+**/__pycache__/
+**/despliegueDEnv/
+/despliegueB/webServer/nohup.out
+**/TempStorage/
+**/app/static/images_concurso/*
+/despliegueD/webServer/app/config.py
