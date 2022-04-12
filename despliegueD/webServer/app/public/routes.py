@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for, request, flash
+from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from app.models import Concurso, Participante
@@ -6,6 +7,7 @@ from . import public_bp
 from .forms import ParticipanteForm
 import math
 from .service import postAudioAPI
+from app.utilidadesDynamo import *
 
 
 @public_bp.route("/")
@@ -17,19 +19,21 @@ def index():
     return render_template("principal.html")
 
 @public_bp.route("/concursos")
+@login_required
 def principal():
-    concursos = Concurso.get_all()
-    # concursos = Concurso.get_by_user(0)
-    # if current_user.is_authenticated:
-    #     concursos = Concurso.get_by_user(current_user.id)
+    concursos = traerConcursosUsuario(current_user.id)
     return render_template("index.html", concursos=concursos)
 
 @public_bp.route("/concursos/<string:url>/", defaults={"page": 1})
 @public_bp.route("/concursos/<string:url>/<int:page>")
 def show_concurso(page,url):
-    concurso = Concurso.get_by_url(url)
-    participantes = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).order_by(Participante.fechaCreacion.desc()).paginate(page=page, per_page=20).items
-    number_pages = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).count()
+    #participantes = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).order_by(Participante.fechaCreacion.desc()).paginate(page=page, per_page=20).items
+    #number_pages = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).count()
+    print("Esta es la URL del concurso")
+    print(url)
+    concurso = traerInfoConcurso(url)
+    participantes = []
+    number_pages = 1
     if number_pages<= 20:
         number_pages=1
     else:

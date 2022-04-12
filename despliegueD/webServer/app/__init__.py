@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask import url_for
 
 login_manager = LoginManager()
 db = SQLAlchemy()
@@ -16,7 +17,11 @@ def create_app():
 
     db.init_app(app)
             
-            
+    @app.context_processor
+    def utility_processor():
+        def abrirURLConcurso(urlConcurso):
+            return url_for('public.show_concurso', url=urlConcurso)
+        return dict(abrirURLConcurso=abrirURLConcurso)
 
     # Registro de los Blueprints
     from .auth import auth_bp

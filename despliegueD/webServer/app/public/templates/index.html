@@ -9,17 +9,15 @@
     {% if current_user.is_anonymous %}
         {% for concurso in concursos %}
         <li>
-            <a href="{{ concurso.public_url() }}">{{ concurso.nombre }}</a>
+            <a href="{{ abrirURLConcurso(concurso['url_concurso']) }}">{{ concurso["nombre"] }}</a>
         </li>
         {% endfor %}
     {% else %}
         {% for concurso in concursos %}
         <li>
-            
-            <a href="{{ concurso.public_url() }}">{{ concurso.nombre }}</a>
-            <a href="{{ concurso.concurso_delete() }}">Eliminar</a>
-            <a href="{{ concurso.concurso_update() }}">Actualizar</a>
-
+            <a href="{{ abrirURLConcurso(concurso['url_concurso']) }}">{{ concurso["nombre"] }}</a>
+            <a href="#">Eliminar</a>
+            <a href="#">Actualizar</a>
         </li>
     {% endfor %}
     {% endif %}

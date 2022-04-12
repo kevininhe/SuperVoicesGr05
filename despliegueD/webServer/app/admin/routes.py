@@ -7,6 +7,7 @@ from app.models import Concurso, Participante
 from . import admin_bp
 from .forms import ConcursoForm
 from .service import deleteAudioAPI
+from app.utilidadesDynamo import *
 
 
 
@@ -26,17 +27,17 @@ def concurso_form(concurso_id):
         guion = form.guion.data
         recomendaciones = form.recomendaciones.data
         fechaCreacion = datetime.now()
-        concurso = Concurso(user_id=current_user.id
+        # Inserta el concurso en Dynamo
+        concurso = insertarConcurso(user_id=current_user.id
                         ,nombre=nombre
                         ,imagen=path_imagen
                         ,url=url
                         ,valor=valor
-                        ,fechaInicio=fechaInicio
-                        ,fechaFin=fechaFin
+                        ,fechaInicio=fechaInicio.strftime('%Y-%m-%d')
+                        ,fechaFin=fechaFin.strftime('%Y-%m-%d')
                         ,guion=guion
                         ,recomendaciones=recomendaciones
-                        ,fechaCreacion=fechaCreacion)
-        concurso.save()
+                        ,fechaCreacion=fechaCreacion.strftime('%Y-%m-%d-%H:%M:%S'))
         return redirect(url_for('public.index'))
     return render_template("concurso_form.html", form=form)
 
