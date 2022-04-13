@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{{ participante.nombre }}{% endblock %}</title>
+    <title>{% block title %}{{ participante["nombre"] }}{% endblock %}</title>
     <!doctype html>
 <html lang="en">
   <head>
@@ -67,14 +67,12 @@
 <br>
 
 {% block content %}
-    <h1></h1>Nombre del participante es: {{ participante.nombres }} {{ participante.apellidos }} </h1> </br>
-    ConcursoId: {{ participante.concurso_id }} </br>
-    path_audio: {{ participante.path_audio }} </br>
-    mail: {{ participante.mail }} </br>
-    observaciones: {{ participante.observaciones }} </br>
-    Fecha Fin: {{ participante.fechaFin }} </br>
-    convertido: {{ participante.convertido }} </br>
-    Guion: {{ participante.guion }} </br>
-    fechaCreacion: {{ participante.fechaCreacion }} </br>
+    <h1></h1>Nombre del participante es: {{ participante["nombres"] }} {{ participante["apellidos"] }} </h1> </br>
+    Nombre concurso: {{ participante["nombre_concurso"] }} </br>
+    path_audio: {{ participante["path_audio"] }} </br>
+    mail: {{ participante["mail"] }} </br>
+    observaciones: {{ participante["observaciones"] }} </br>
+    convertido: {{ participante["convertido"] }} </br>
+    fechaCreacion: {{ participante["fechaCreacion"] }} </br>
 
 {% endblock %}

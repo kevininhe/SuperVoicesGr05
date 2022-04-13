@@ -125,3 +125,79 @@ def eliminarConcurso(uid):
         ReturnValues="ALL_OLD"
     )
     return response
+
+# Seccion de participantes
+
+def traerParticipantesConcurso(uidConcurso,traerSoloProcesados=False):
+    pk = uidConcurso
+    sk = 'VOZ#'
+    response = None
+    if traerSoloProcesados:
+        response = TABLE.query(
+            KeyConditionExpression=Key('PK').eq(pk) & Key('SK').begins_with(sk),
+            FilterExpression=Attr('procesado').eq(True)
+        )
+    else:
+        response = TABLE.query(
+            KeyConditionExpression=Key('PK').eq(pk) & Key('SK').begins_with(sk)
+        )
+    if response:
+        items = response['Items']
+        itemsSorted = sorted(items, key = lambda diction : datetime.strptime(diction["fechaCreacion"],"%Y-%m-%d-%H:%M:%S"), reverse=True)
+        return items
+    else:
+        return []
+
+def insertarParticipante(concurso_id,path_audio,path_audio_origin,nombres,apellidos,mail,observaciones,convertido,fechaCreacion):
+    uid = str(uuid.uuid4())
+    return actualizarParticipante(uid,concurso_id,path_audio,path_audio_origin,nombres,apellidos,mail,observaciones,convertido,fechaCreacion)
+
+# Retorna un diccionario con dos keys: Attributes y ResponseMetadata. Attributes trae el objeto despues de ser actualizado
+def actualizarParticipante(uid,concurso_id,path_audio,path_audio_origin,nombres,apellidos,mail,observaciones,convertido,fechaCreacion):
+    pk = 'CON#{}'.format(concurso_id)
+    sk = 'VOZ#{}'.format(uid)
+
+    updatedElement = TABLE.update_item(
+    Key={
+        'PK': pk,
+        'SK': sk
+    },
+    UpdateExpression='SET path_audio = :path_audio,path_audio_origin = :path_audio_origin,nombres = :nombres,apellidos = :apellidos,mail = :mail,observaciones = :observaciones,convertido = :convertido,fechaCreacion = :fechaCreacion',
+    ExpressionAttributeValues={
+        ':path_audio': path_audio,
+        ':path_audio_origin': path_audio_origin,
+        ':nombres': nombres,
+        ':apellidos': apellidos,
+        ':mail': mail,
+        ':observaciones': observaciones,
+        ':convertido': convertido,
+        ':fechaCreacion': fechaCreacion
+    },
+    ReturnValues="ALL_NEW"
+    )
+    return updatedElement
+
+def traerInfoParticipante(urlConcurso,participante_id):
+    uid = traerUUIDConcurso(urlConcurso)
+    pk = 'CON#{}'.format(uid)
+    sk = participante_id
+    response = TABLE.query(
+        KeyConditionExpression=Key('PK').eq(pk) & Key('SK').eq(sk)
+    )
+    items = response['Items']
+    if len(items) > 0:
+        return items[0]
+
+# Retorna un diccionario con dos keys: Attributes y ResponseMetadata. Si no elimina nada, no viene Attributes
+def eliminarParticipante(urlConcurso,participante_id):
+    uid = traerUUIDConcurso(urlConcurso)
+    pk = 'CON#{}'.format(uid)
+    sk = participante_id
+    response = TABLE.delete_item(
+        Key={
+        'PK': pk,
+        'SK': sk
+        },
+        ReturnValues="ALL_OLD"
+    )
+    return response

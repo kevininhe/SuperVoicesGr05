@@ -27,36 +27,40 @@ def principal():
 @public_bp.route("/concursos/<string:url>/", defaults={"page": 1})
 @public_bp.route("/concursos/<string:url>/<int:page>")
 def show_concurso(page,url):
-    #participantes = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).order_by(Participante.fechaCreacion.desc()).paginate(page=page, per_page=20).items
-    #number_pages = Participante.query.filter_by(concurso_id='{}'.format(concurso.id)).count()
-    print("Esta es la URL del concurso")
-    print(url)
     concurso = traerInfoConcurso(url)
     participantes = []
+    if current_user.is_anonymous:
+        participantes = traerParticipantesConcurso(concurso["PK"],True)
+    else:
+        participantes = traerParticipantesConcurso(concurso["PK"])
     number_pages = 1
+    # TODO: Definir si hacemos paginacion
+    """
     if number_pages<= 20:
         number_pages=1
     else:
         number_pages= int(math.ceil(number_pages/20)+1)
+    """
     return render_template("concurso_view.html", concurso=concurso, voz=participantes, pages=number_pages)
 
-@public_bp.route("/participantes/<int:participante_id>/")
-def show_participante(participante_id):
-    participante = Participante.get_by_id(participante_id)
+@public_bp.route("/participantes/<string:url_concurso>/<string:participante_id>/")
+def show_participante(url_concurso,participante_id):
+    concurso = traerInfoConcurso(url_concurso)
+    participante = traerInfoParticipante(url_concurso,participante_id)
     if participante is None:
+        # TODO: Revisar que se puede usar para este proposito
         abort(404)
+    # Guardar el nombre del concurso en el diccionario de participante
+    participante["nombre_concurso"] = concurso["nombre"]
     return render_template("participante_view.html", participante=participante)
 
-@public_bp.route("/public/participante/<int:concurso_id>", methods=['GET', 'POST'])
-#@public_bp.route("/public/participante/<int:participante_id>/", methods=['GET', 'POST','PUT'])
-def participante_form(concurso_id):
-    form = ParticipanteForm(concurso_id)
-    #choices_concursos = Concurso.query.with_entities(Concurso.url).all()
-    #list_concursos = [tup[0] for tup in choices_concursos]
-    #form.concurso_id.choices = list_concursos
-    print(concurso_id)
+@public_bp.route("/public/participante/<string:url_concurso>", methods=['GET', 'POST'])
+def participante_form(url_concurso):
+    concurso = traerInfoConcurso(url_concurso)
+    concurso["PK"] = concurso["PK"].replace("CON#","")
+    form = ParticipanteForm(concurso["nombre"])
     if form.validate_on_submit():
-        concurso_id =form.concurso_id
+        concurso_id = concurso["PK"]
         path_audio = secure_filename(form.path_audio.data.filename)
         form.path_audio.data.save("app/static/TempStorage/" + path_audio)
         nombres = form.nombres.data
@@ -64,22 +68,25 @@ def participante_form(concurso_id):
         mail = form.mail.data
         observaciones = form.observaciones.data
         convertido = False
-        fechaCreacion = datetime.now()
-        participante = Participante(concurso_id=concurso_id
+        fechaCreacion = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+        
+        # Insertar participante en Dynamo
+        response = insertarParticipante(concurso_id=concurso_id
                         ,path_audio=path_audio
-			,path_audio_origin=path_audio
+			            ,path_audio_origin=path_audio
                         ,nombres=nombres
                         ,apellidos=apellidos
                         ,mail=mail
                         ,observaciones=observaciones
                         ,convertido=False
                         ,fechaCreacion=fechaCreacion)
-        participante.save()
-        postAudioAPI("app/static/TempStorage/" + path_audio)
+        # TODO: Guardar la voz en el S3
+        #postAudioAPI("app/static/TempStorage/" + path_audio)
+        
         flash('Hemos recibido tu voz y la estamos procesando para que sea publicada en la \
                             página del concurso y pueda ser posteriormente revisada por nuestro equipo de trabajo. \
                             Tan pronto la voz quede publicada en la página del concurso te notificaremos por email.')
-        return  redirect(url_for('public.participante_form',concurso_id=concurso_id))
+        return  redirect(url_for('public.participante_form',url_concurso=url_concurso))
     return render_template("participante_form.html", form=form)
 
 

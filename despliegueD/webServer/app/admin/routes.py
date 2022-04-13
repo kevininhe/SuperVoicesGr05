@@ -9,6 +9,7 @@ from .forms import ConcursoForm
 from .service import deleteAudioAPI
 from app.utilidadesDynamo import *
 from collections import namedtuple
+from os.path import exists
 
 
 @admin_bp.route("/admin/concurso/", methods=['GET', 'POST'], defaults={'concurso_id': None})
@@ -99,12 +100,15 @@ def concurso_update(url_concurso):
             return redirect(url_for('public.index')) 
         return render_template('concurso_form.html', form=form)
 
-@admin_bp.route("/participanteDelete/<int:participante_id>/", methods=['GET', 'POST'])   
-def  participante_delete(participante_id):
-    participante = Participante.get_by_id(participante_id)
-    os.remove("app/static/AudioFilesDestiny/{}".format(participante.path_audio))
-    os.remove("app/static/AudioFilesOrigin/{}".format(participante.path_audio_origin))	
-    participante.delete()
+@admin_bp.route("/participanteDelete/<string:url_concurso>/<string:participante_id>/") 
+def participante_delete(url_concurso,participante_id):
+    participante = traerInfoParticipante(url_concurso,participante_id)
+    if exists("app/static/AudioFilesDestiny/{}".format(participante["path_audio"])):
+        os.remove("app/static/AudioFilesDestiny/{}".format(participante["path_audio"]))
+    if exists("app/static/AudioFilesOrigin/{}".format(participante["path_audio_origin"])):
+        os.remove("app/static/AudioFilesOrigin/{}".format(participante["path_audio_origin"]))
+    # Eliminar participante de DB Dynamo
+    eliminarParticipante(url_concurso,participante_id)
     return redirect(url_for('public.index'))
 
 

@@ -5,7 +5,7 @@ from flask_wtf.file import FileField, FileRequired
 
 class ParticipanteForm(FlaskForm):
     id = IntegerField('id')
-    concurso_id = IntegerField('concurso')
+    concurso_nombre = StringField('concurso')
     path_audio = FileField('Voz', validators=[FileRequired()], render_kw={'placeholder': 'Cargar Voz'})
     nombres = StringField('nombres', validators=[Length(max=128)])
     apellidos = StringField('apellidos', validators=[Length(max=128)])
@@ -16,4 +16,4 @@ class ParticipanteForm(FlaskForm):
 
     def __init__(self,concurso):
         super().__init__()
-        self.concurso_id=concurso
+        self.concurso_nombre=concurso
