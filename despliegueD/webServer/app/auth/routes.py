@@ -6,6 +6,8 @@ from app import login_manager
 from . import auth_bp
 from .forms import SignupForm, LoginForm
 from .models import User
+from app import store
+import pickle
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
@@ -55,10 +57,25 @@ def login():
     
 @auth_bp.route('/logout')
 def logout():
+    # Delete key from Elasticache
+    if current_user.is_authenticated:
+        userk = 'user_{}'.format(current_user.id)
+        if store.get(userk):
+            store.delete(userk)
     logout_user()
     return redirect(url_for('public.index'))
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get_by_id(int(user_id))
+    # Crear la llave
+    userk = 'user_{}'.format(user_id)
+    # Intenta cargar el usuario desde la cache
+    user_obj = pickle.loads(store.get(userk)) if store.get(userk) else None
+    if user_obj is None:
+        user_obj = User.get_by_id(int(user_id))
+        # Usa picke para poder serializar el objeto y guardarlo en la cache
+        user_pkl = pickle.dumps(user_obj)
+        # Conserva el usuario en la cache por 10 minutos
+        store.set(userk,user_pkl,ex=600)
+    return user_obj

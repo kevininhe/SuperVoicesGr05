@@ -2,9 +2,13 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask import url_for
+import redis
+from app.config import Config
 
 login_manager = LoginManager()
 db = SQLAlchemy()
+# Create redis elasticache conector
+store = redis.Redis.from_url(Config().REDIS_URL)
 
 def create_app():
 
