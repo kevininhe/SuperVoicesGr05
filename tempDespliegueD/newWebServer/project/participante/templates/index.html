@@ -1,0 +1,26 @@
+{% extends "base_template.html" %}
+{% block title %}Proyecto 1 - Grupo 05{% endblock %}
+{% block content %}
+    <br>
+    <br>
+    <br>
+
+    <ul>
+    {% if current_user.is_anonymous %}
+        {% for concurso in concursos %}
+        <li>
+            <a href="{{ url_for('participantes.show_concurso', url=concurso['url']) }}">{{ concurso["nombre"] }}</a>
+        </li>
+        {% endfor %}
+    {% else %}
+        {% for concurso in concursos %}
+        <li>
+            <a href="{{ url_for('participantes.show_concurso',url=concurso['url']) }}">{{ concurso["nombre"] }}</a>
+            <a href="{{ url_for('concurso.concurso_delete',concurso_id=concurso.id | string()) }}">Eliminar</a>
+            <a href="{{ url_for('concurso.concurso_update',concurso_id=concurso.id | string()) }}">Actualizar</a>
+        </li>
+    {% endfor %}
+    {% endif %}
+    </ul>
+{% endblock %}
+
