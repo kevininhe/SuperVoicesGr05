@@ -10,7 +10,7 @@ from botocore.client import Config
 import os
 from boto3.s3.transfer import TransferConfig
 
-# Set the desired multipart threshold value (5GB)
+# Set the desired multipart threshold value (50 MBs)
 MB = 1024 ** 2
 CONFIGTR_S3 = TransferConfig(multipart_threshold=50*MB)
 
